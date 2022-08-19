@@ -8,10 +8,12 @@ import Tasks.Task;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class Manager {
+public class InMemoryTaskManager implements TaskManager {
     private Integer id = 1;
     private final ArrayList<Task> tasks = new ArrayList<>();
     private final ArrayList<Epic> epics = new ArrayList<>();
+    static HistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
+
 
     private void updateEpicStatus(ArrayList<Epic> epics) {
         for (Epic epic : epics) {
@@ -90,6 +92,7 @@ public class Manager {
                 }
             }
         }
+        inMemoryHistoryManager.add(taskById);
         return taskById;
     }
 
@@ -149,7 +152,7 @@ public class Manager {
         updateEpicStatus(epics);
     }
 
-    public void removeTaskById(Integer id) {
+    public void removeAnyTaskById(Integer id) {
         for (Task task : tasks) {
             if (Objects.equals(task.getId(), id)) {
                 tasks.remove(task);
@@ -189,6 +192,7 @@ public class Manager {
                 break;
             }
         }
+        inMemoryHistoryManager.add(taskById);
         return taskById;
     }
 
@@ -200,6 +204,7 @@ public class Manager {
                 break;
             }
         }
+        inMemoryHistoryManager.add(epicById);
         return epicById;
     }
 
@@ -214,6 +219,12 @@ public class Manager {
                 }
             }
         }
+        inMemoryHistoryManager.add(subtaskById);
         return subtaskById;
     }
+
+    public ArrayList<Task> getHistory() {
+        return inMemoryHistoryManager.getHistory();
+    }
+
 }

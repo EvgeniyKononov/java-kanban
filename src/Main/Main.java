@@ -1,11 +1,14 @@
 package Main;
 
-import Manager.Manager;
+import Manager.InMemoryTaskManager;
+import Manager.Managers;
+import Manager.TaskManager;
 import Tasks.Epic;
 import Tasks.Status;
 import Tasks.Subtask;
 import Tasks.Task;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
@@ -20,14 +23,16 @@ public class Main {
         System.out.println("6 - Удаление по ID");
         System.out.println("7 - Получение списка всех подзадач определённого эпика");
         System.out.println("8 - Получение задачи по ID по типу");
-        System.out.println("9 - Выход");
+        System.out.println("9 - Просмотреть историю просмотров");
+        System.out.println("10 - Выход");
     }
 
     public static void main(String[] args) {
-        Manager manager = new Manager();
+        Managers managers = new Managers();
+        TaskManager manager = managers.getDefault();
         Scanner scanner = new Scanner(System.in);
         int choice = 0;
-        while (choice != 9) {
+        while (choice != 10) {
             printMenu();
             choice = scanner.nextInt();
             switch (choice) {
@@ -104,7 +109,7 @@ public class Main {
                 case 6: {
                     System.out.println("номер ID");
                     int id = scanner.nextInt();
-                    manager.removeTaskById(id);
+                    manager.removeAnyTaskById(id);
                     break;
                 }
                 case 7: {
@@ -128,10 +133,14 @@ public class Main {
                     break;
                 }
                 case 9: {
+                    System.out.println(Managers.getDefaultHistory().toString());
+                    break;
+                }
+                case 10: {
                     break;
                 }
                 default: {
-                    System.out.println("Введите цифру от 1 до 8");
+                    System.out.println("Введите цифру от 1 до 10");
                     break;
                 }
             }
