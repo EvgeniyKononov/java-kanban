@@ -6,6 +6,7 @@ import Tasks.Subtask;
 import Tasks.Task;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Objects;
 
 public class InMemoryTaskManager implements TaskManager {
@@ -41,10 +42,12 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
+    @Override
     public ArrayList<Task> getAllTasks() {
         return tasks;
     }
 
+    @Override
     public ArrayList<Subtask> getAllSubtasks() {
         ArrayList<Subtask> subtaskList = new ArrayList<>();
         for (Epic epic : epics) {
@@ -53,10 +56,12 @@ public class InMemoryTaskManager implements TaskManager {
         return subtaskList;
     }
 
+    @Override
     public ArrayList<Epic> getAllEpics() {
         return epics;
     }
 
+    @Override
     public void removeAllSubtasks() {
         for (Epic epic : epics) {
             epic.setSubtask(new ArrayList<>());
@@ -64,14 +69,17 @@ public class InMemoryTaskManager implements TaskManager {
         updateEpicStatus(epics);
     }
 
+    @Override
     public void removeAllEpics() {
         epics.clear();
     }
 
+    @Override
     public void removeAllTasks() {
         tasks.clear();
     }
 
+    @Override
     public Task getAnyTaskById(Integer id) {
         Task taskById = new Task();
         for (Task task : tasks) {
@@ -96,18 +104,21 @@ public class InMemoryTaskManager implements TaskManager {
         return taskById;
     }
 
+    @Override
     public void addTask(Task task) {
         task.setId(id);
         tasks.add(task);
         id++;
     }
 
+    @Override
     public void addEpic(Epic epic) {
         epic.setId(id);
         epics.add(epic);
         id++;
     }
 
+    @Override
     public void addSubtask(Subtask subtask) {
         subtask.setId(id);
         for (Epic epic : epics) {
@@ -119,6 +130,7 @@ public class InMemoryTaskManager implements TaskManager {
         updateEpicStatus(epics);
     }
 
+    @Override
     public void amendTask(Task updatedTask) {
         for (Task task : tasks) {
             if (Objects.equals(task.getId(), updatedTask.getId())) {
@@ -128,6 +140,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
+    @Override
     public void amendEpic(Epic updatedTask) {
         for (Epic epic : epics) {
             if (Objects.equals(epic.getId(), updatedTask.getId())) {
@@ -140,6 +153,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
+    @Override
     public void amendSubtask(Subtask updatedTask) {
         for (Epic epic : epics) {
             for (Subtask subtask : epic.getSubtask()) {
@@ -152,6 +166,7 @@ public class InMemoryTaskManager implements TaskManager {
         updateEpicStatus(epics);
     }
 
+    @Override
     public void removeAnyTaskById(Integer id) {
         for (Task task : tasks) {
             if (Objects.equals(task.getId(), id)) {
@@ -174,6 +189,7 @@ public class InMemoryTaskManager implements TaskManager {
         updateEpicStatus(epics);
     }
 
+    @Override
     public ArrayList<Subtask> getAllSubtaskByEpicId(Integer id) {
         ArrayList<Subtask> subtasksList = new ArrayList<>();
         for (Epic epic : epics) {
@@ -184,6 +200,7 @@ public class InMemoryTaskManager implements TaskManager {
         return subtasksList;
     }
 
+    @Override
     public Task getTaskById(Integer id) {
         Task taskById = new Task();
         for (Task task : tasks) {
@@ -196,6 +213,7 @@ public class InMemoryTaskManager implements TaskManager {
         return taskById;
     }
 
+    @Override
     public Epic getEpicById(Integer id) {
         Epic epicById = new Epic();
         for (Epic epic : epics) {
@@ -208,6 +226,7 @@ public class InMemoryTaskManager implements TaskManager {
         return epicById;
     }
 
+    @Override
     public Subtask getSubtaskById(Integer id) {
         Subtask subtaskById = new Subtask();
 
@@ -222,9 +241,4 @@ public class InMemoryTaskManager implements TaskManager {
         inMemoryHistoryManager.add(subtaskById);
         return subtaskById;
     }
-
-    public ArrayList<Task> getHistory() {
-        return inMemoryHistoryManager.getHistory();
-    }
-
 }

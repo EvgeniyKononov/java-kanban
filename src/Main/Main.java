@@ -1,6 +1,5 @@
 package Main;
 
-import Manager.InMemoryTaskManager;
 import Manager.Managers;
 import Manager.TaskManager;
 import Tasks.Epic;
@@ -8,7 +7,6 @@ import Tasks.Status;
 import Tasks.Subtask;
 import Tasks.Task;
 
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
@@ -133,7 +131,7 @@ public class Main {
                     break;
                 }
                 case 9: {
-                    System.out.println(Managers.getDefaultHistory().toString());
+                    System.out.println(Managers.getDefaultHistory().getHistory().toString());
                     break;
                 }
                 case 10: {
