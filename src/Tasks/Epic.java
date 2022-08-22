@@ -16,12 +16,13 @@ public class Epic extends Task {
         this.subtask = new ArrayList<>();
     }
 
-    public Epic(String name, String description, Integer id, Status status) {
-        super(name, description, id, status);
-    }
-
     public Epic() {
     }
+
+    public Epic(String name, String description, Integer id) {
+        super(name, description, id);
+    }
+
 
     @Override
     public String toString() {

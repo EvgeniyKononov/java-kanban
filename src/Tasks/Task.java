@@ -25,6 +25,12 @@ public class Task {
         this.id = 0;
     }
 
+    public Task(String name, String description, Integer id) {
+        this.name = name;
+        this.description = description;
+        this.id = id;
+    }
+
     public void setId(Integer id) {
         this.id = id;
     }

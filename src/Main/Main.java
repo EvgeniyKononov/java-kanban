@@ -1,5 +1,6 @@
 package Main;
 
+import Manager.InMemoryTaskManager;
 import Manager.Managers;
 import Manager.TaskManager;
 import Tasks.Epic;
@@ -25,6 +26,12 @@ public class Main {
         System.out.println("10 - Выход");
     }
 
+    private static Status amendStatus() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Сатус (NEW, IN_PROGRESS, DONE)");
+        return Status.valueOf(scanner.nextLine());
+    }
+
     public static void main(String[] args) {
         Managers managers = new Managers();
         TaskManager manager = managers.getDefault();
@@ -37,24 +44,38 @@ public class Main {
                 case 1: {
                     System.out.println("Тип задачи: 1 - задача; 2 - эпик; 3 - подзадача");
                     int type = scanner.nextInt();
-                    if (type == 1) {
-                        System.out.println(manager.getAllTasks().toString());
-                    } else if (type == 2) {
-                        System.out.println(manager.getAllEpics().toString());
-                    } else if (type == 3) {
-                        System.out.println(manager.getAllSubtasks().toString());
+                    switch (type) {
+                        case 1: {
+                            System.out.println(manager.getAllTasks().toString());
+                            break;
+                        }
+                        case 2: {
+                            System.out.println(manager.getAllEpics().toString());
+                            break;
+                        }
+                        case 3: {
+                            System.out.println(manager.getAllSubtasks().toString());
+                            break;
+                        }
                     }
                     break;
                 }
                 case 2: {
                     System.out.println("Тип задачи: 1 - задача; 2 - эпик; 3 - подзадача");
                     int type = scanner.nextInt();
-                    if (type == 1) {
-                        manager.removeAllTasks();
-                    } else if (type == 2) {
-                        manager.removeAllEpics();
-                    } else if (type == 3) {
-                        manager.removeAllSubtasks();
+                    switch (type) {
+                        case 1: {
+                            manager.removeAllTasks();
+                            break;
+                        }
+                        case 2: {
+                            manager.removeAllEpics();
+                            break;
+                        }
+                        case 3: {
+                            manager.removeAllSubtasks();
+                            break;
+                        }
                     }
                     break;
                 }
@@ -66,14 +87,21 @@ public class Main {
                     String name = scanner.nextLine();
                     System.out.println("Описание");
                     String description = scanner.nextLine();
-                    if (type == 1) {
-                        manager.addTask(new Task(name, description));
-                    } else if (type == 2) {
-                        manager.addEpic(new Epic(name, description));
-                    } else if (type == 3) {
-                        System.out.println("Номер эпика");
-                        int epicId = scanner.nextInt();
-                        manager.addSubtask(new Subtask(name, description, epicId));
+                    switch (type) {
+                        case 1: {
+                            manager.addTask(new Task(name, description));
+                            break;
+                        }
+                        case 2: {
+                            manager.addEpic(new Epic(name, description));
+                            break;
+                        }
+                        case 3: {
+                            System.out.println("Номер эпика");
+                            int epicId = scanner.nextInt();
+                            manager.addSubtask(new Subtask(name, description, epicId));
+                            break;
+                        }
                     }
                     break;
                 }
@@ -93,14 +121,19 @@ public class Main {
                     String name = scanner.nextLine();
                     System.out.println("Описание");
                     String description = scanner.nextLine();
-                    System.out.println("Сатус (NEW, IN_PROGRESS, DONE)");
-                    Status status = Status.valueOf(scanner.nextLine());
-                    if (type == 1) {
-                        manager.amendTask(new Task(name, description, id, status));
-                    } else if (type == 2) {
-                        manager.amendEpic(new Epic(name, description, id, status));
-                    } else if (type == 3) {
-                        manager.amendSubtask(new Subtask(name, description, id, status));
+                    switch (type) {
+                        case 1: {
+                            manager.amendTask(new Task(name, description, id, amendStatus()));
+                            break;
+                        }
+                        case 2: {
+                            manager.amendEpic(new Epic(name, description, id));
+                            break;
+                        }
+                        case 3: {
+                            manager.amendSubtask(new Subtask(name, description, id, amendStatus()));
+                            break;
+                        }
                     }
                     break;
                 }
@@ -121,17 +154,25 @@ public class Main {
                     int type = scanner.nextInt();
                     System.out.println("Номер ID");
                     int id = scanner.nextInt();
-                    if (type == 1) {
-                        System.out.println(manager.getTaskById(id).toString());
-                    } else if (type == 2) {
-                        System.out.println(manager.getEpicById(id).toString());
-                    } else if (type == 3) {
-                        System.out.println(manager.getSubtaskById(id).toString());
+                    switch (type) {
+                        case 1: {
+                            System.out.println(manager.getTaskById(id).toString());
+                            break;
+                        }
+                        case 2: {
+                            System.out.println(manager.getEpicById(id).toString());
+                            break;
+                        }
+                        case 3: {
+                            System.out.println(manager.getSubtaskById(id).toString());
+                            break;
+                        }
                     }
                     break;
                 }
                 case 9: {
-                    System.out.println(Managers.getDefaultHistory().getHistory().toString());
+                    InMemoryTaskManager history = (InMemoryTaskManager) manager;
+                    System.out.println(history.getInMemoryHistoryManager().getHistory().toString());
                     break;
                 }
                 case 10: {
@@ -143,5 +184,6 @@ public class Main {
                 }
             }
         }
+        scanner.close();
     }
 }

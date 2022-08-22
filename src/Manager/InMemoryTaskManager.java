@@ -12,7 +12,7 @@ public class InMemoryTaskManager implements TaskManager {
     private Integer id = 1;
     private final ArrayList<Task> tasks = new ArrayList<>();
     private final ArrayList<Epic> epics = new ArrayList<>();
-    static HistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
+    private final HistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
 
 
     private void updateEpicStatus(ArrayList<Epic> epics) {
@@ -146,6 +146,7 @@ public class InMemoryTaskManager implements TaskManager {
                 updatedTask.setSubtask(epic.getSubtask());
                 updatedTask.setSubtaskAmount(epic.getSubtaskAmount());
                 updatedTask.setDoneSubtaskAmount(epic.getDoneSubtaskAmount());
+                updatedTask.setStatus(epic.getStatus());
                 epics.set(epics.indexOf(epic), updatedTask);
                 break;
             }
@@ -228,7 +229,6 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Subtask getSubtaskById(Integer id) {
         Subtask subtaskById = new Subtask();
-
         for (Epic epic : epics) {
             for (Subtask subtask : epic.getSubtask()) {
                 if (Objects.equals(subtask.getId(), id)) {
@@ -239,5 +239,9 @@ public class InMemoryTaskManager implements TaskManager {
         }
         inMemoryHistoryManager.add(subtaskById);
         return subtaskById;
+    }
+
+    public HistoryManager getInMemoryHistoryManager() {
+        return inMemoryHistoryManager;
     }
 }
