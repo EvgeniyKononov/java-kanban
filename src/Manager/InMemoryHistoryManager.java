@@ -9,17 +9,15 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public LinkedList<Task> getHistory() {
-        LinkedList<Task> returnTasks = new LinkedList<>();
-        LinkedList<Task> copyOfHistoryTasks = new LinkedList<>(historyTasks);
-        for (int i = 0; i < 10 && copyOfHistoryTasks.size() != 0; i++) {
-            returnTasks.addFirst(copyOfHistoryTasks.pollLast());
-        }
-        return returnTasks;
+        return historyTasks;
     }
 
     @Override
     public void add(Task task) {
-        historyTasks.add(task);
+        historyTasks.addLast(task);
+        if (historyTasks.size() == 11) {
+            historyTasks.removeFirst();
+        }
     }
 
     @Override
