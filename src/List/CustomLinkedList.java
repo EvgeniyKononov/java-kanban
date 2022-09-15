@@ -13,25 +13,23 @@ public class CustomLinkedList {
     private Node first;
 
     private void linkLast(Task task) {
-        Node l = last;
+        Node oldLast = last;
         Node newNode = new Node(last, task, null);
         last = newNode;
-        if (l == null) first = newNode;
-        else l.next = newNode;
+        if (oldLast == null) first = newNode;
+        else oldLast.setNext(newNode);
     }
 
     private void removeNode(Node node) {
-        if (node.prev == null) {
-            first = node.next;
+        if (node.getPrev() == null) {
+            first = node.getNext();
         } else {
-            node.prev.next = node.next;
-            node.prev = null;
+            node.getPrev().setNext(node.getNext());
         }
-        if (node.next == null) {
-            last = node.prev;
+        if (node.getNext() == null) {
+            last = node.getPrev();
         } else {
-            node.next.prev = node.prev;
-            node.next = null;
+            node.getNext().setPrev(node.getPrev());
         }
         node = null;
     }
@@ -47,9 +45,9 @@ public class CustomLinkedList {
         if (node == null) {
             return;
         } else {
-            for (Node x = first; x != null; x = x.next) {
-                if (node.equals(x)) {
-                    removeNode(x);
+            for (Node searchingNode = first; searchingNode != null; searchingNode = searchingNode.getNext()) {
+                if (node.equals(searchingNode)) {
+                    removeNode(searchingNode);
                 }
             }
         }
@@ -63,9 +61,16 @@ public class CustomLinkedList {
             return null;
         }
         do {
-            tasks.add(node.task);
-            node = node.next;
+            tasks.add(node.getTask());
+            node = node.getNext();
         } while (node != null);
         return tasks;
+    }
+
+    @Override
+    public String toString() {
+        return "CustomLinkedList{" +
+                "nodeMap=" + nodeMap +
+                '}';
     }
 }

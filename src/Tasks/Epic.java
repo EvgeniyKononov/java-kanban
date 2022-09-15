@@ -3,17 +3,11 @@ package Tasks;
 import java.util.ArrayList;
 
 public class Epic extends Task {
-    private Integer subtaskAmount;
-    private Integer doneSubtaskAmount;
-    private Integer newSubtasksAmount;
-    private ArrayList<Subtask> subtask;
+    private ArrayList<Integer> subtaskID;
 
     public Epic(String name, String description) {
         super(name, description);
-        this.subtaskAmount = 0;
-        this.newSubtasksAmount = 0;
-        this.doneSubtaskAmount = 0;
-        this.subtask = new ArrayList<>();
+        this.subtaskID = new ArrayList<>();
     }
 
     public Epic() {
@@ -23,7 +17,6 @@ public class Epic extends Task {
         super(name, description, id);
     }
 
-
     @Override
     public String toString() {
         return "Epic{" +
@@ -31,45 +24,15 @@ public class Epic extends Task {
                 ", description='" + getDescription() + '\'' +
                 ", id=" + getId() +
                 ", status=" + getStatus() +
-                ", subtask=" + getSubtask() +
+                ", subtask=" + getSubtaskID() +
                 '}';
     }
 
-    public Integer getSubtaskAmount() {
-        return subtaskAmount;
+    public ArrayList<Integer> getSubtaskID() {
+        return subtaskID;
     }
 
-    public void setSubtaskAmount(Integer subtaskAmount) {
-        this.subtaskAmount = subtaskAmount;
+    public void setSubtaskID(ArrayList<Integer> subtaskID) {
+        this.subtaskID = subtaskID;
     }
-
-    public Integer getDoneSubtaskAmount() {
-        return doneSubtaskAmount;
-    }
-
-    public void setDoneSubtaskAmount(Integer doneSubtaskAmount) {
-        this.doneSubtaskAmount = doneSubtaskAmount;
-    }
-
-    public Integer getNewSubtasksAmount() {
-        return newSubtasksAmount;
-    }
-
-    public void setNewSubtasksAmount(Integer newSubtasksAmount) {
-        this.newSubtasksAmount = newSubtasksAmount;
-    }
-
-    public ArrayList<Subtask> getSubtask() {
-        return subtask;
-    }
-
-    public void setSubtask(ArrayList<Subtask> subtask) {
-        this.subtask = subtask;
-    }
-
 }
-
-
-
-
-

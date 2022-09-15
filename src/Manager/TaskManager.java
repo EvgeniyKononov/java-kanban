@@ -43,4 +43,5 @@ public interface TaskManager {
 
     Task getAnyTaskById(Integer id);
 
+    HistoryManager getInMemoryHistoryManager();
 }

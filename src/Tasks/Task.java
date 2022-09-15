@@ -3,9 +3,9 @@ package Tasks;
 import java.util.Objects;
 
 public class Task {
+    private Integer id;
     private String name;
     private String description;
-    private Integer id;
     private Status status;
 
     public Task() {
@@ -28,10 +28,6 @@ public class Task {
     public Task(String name, String description, Integer id) {
         this.name = name;
         this.description = description;
-        this.id = id;
-    }
-
-    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -81,4 +77,15 @@ public class Task {
         return description;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }
