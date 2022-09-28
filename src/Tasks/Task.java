@@ -2,11 +2,14 @@ package Tasks;
 
 import java.util.Objects;
 
+import static java.lang.Integer.parseInt;
+
 public class Task {
     private Integer id;
     private String name;
     private String description;
     private Status status;
+    private final Type type = Type.TASK;
 
     public Task() {
     }
@@ -49,12 +52,17 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" +
-                "name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", id=" + id +
-                ", status=" + status +
-                '}';
+        return String.format("%s,%s,%s,%s,%s,", this.id, this.type, this.name, this.status, this.description);
+    }
+
+    public Task fromString(String value) {
+        Task task = new Task();
+        String[] split = value.split(",");
+        task.id = parseInt(split[0]);
+        task.name = split[2];
+        task.status = Status.valueOf(split[3]);
+        task.description = split[4];
+        return task;
     }
 
     public Integer getId() {

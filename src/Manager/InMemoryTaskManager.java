@@ -6,16 +6,34 @@ import Tasks.Subtask;
 import Tasks.Task;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
 public class InMemoryTaskManager implements TaskManager {
-    private Integer id = 1;
-    private final ArrayList<Task> tasks = new ArrayList<>();
-    private final ArrayList<Epic> epics = new ArrayList<>();
+    protected Integer id = 1;
+    protected ArrayList<Task> tasks = new ArrayList<>();
+    protected ArrayList<Epic> epics = new ArrayList<>();
+    protected ArrayList<Subtask> subtasks = new ArrayList<>();
+    protected HistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
 
-    private final ArrayList<Subtask> subtasks = new ArrayList<>();
-    private final HistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
+    public InMemoryTaskManager(Integer id, ArrayList<Task> tasks, ArrayList<Epic> epics,
+                               ArrayList<Subtask> subtasks, HistoryManager inMemoryHistoryManager) {
+        this.id = id;
+        this.tasks = tasks;
+        this.epics = epics;
+        this.subtasks = subtasks;
+        this.inMemoryHistoryManager = inMemoryHistoryManager;
+    }
+
+    public InMemoryTaskManager() {
+    }
+
+    public InMemoryTaskManager(ArrayList<Task> tasks, ArrayList<Epic> epics, ArrayList<Subtask> subtasks) {
+        this.tasks = tasks;
+        this.epics = epics;
+        this.subtasks = subtasks;
+    }
 
     private void updateEpicStatus(ArrayList<Epic> epics) {
         for (Epic epic : epics) {
@@ -35,7 +53,6 @@ public class InMemoryTaskManager implements TaskManager {
                                 doneSubtaskAmount++;
                             }
                         }
-
                     }
                 }
             }
@@ -48,7 +65,6 @@ public class InMemoryTaskManager implements TaskManager {
             }
         }
     }
-
 
     @Override
     public ArrayList<Task> getAllTasks() {
@@ -192,14 +208,15 @@ public class InMemoryTaskManager implements TaskManager {
             }
         }
         List<Task> subtaskList = new ArrayList<>();
-        for (Subtask subtask : subtasks) {
+        Iterator <Subtask> subtaskIterator = subtasks.iterator();
+        while (subtaskIterator.hasNext()) {
+            Subtask subtask = subtaskIterator.next();
             if (Objects.equals(subtask.getEpicId(), id)) {
                 subtaskList.add(subtask);
+                subtaskIterator.remove();
             }
             if (Objects.equals(subtask.getId(), id)) {
                 subtasks.remove(subtask);
-                break;
-
             }
         }
         updateEpicStatus(epics);
@@ -259,5 +276,17 @@ public class InMemoryTaskManager implements TaskManager {
 
     public HistoryManager getInMemoryHistoryManager() {
         return inMemoryHistoryManager;
+    }
+
+    public ArrayList<Task> getTasks() {
+        return tasks;
+    }
+
+    public ArrayList<Epic> getEpics() {
+        return epics;
+    }
+
+    public ArrayList<Subtask> getSubtasks() {
+        return subtasks;
     }
 }
