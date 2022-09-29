@@ -1,6 +1,6 @@
 package Manager;
 
-import Tasks.Task;
+import Task.Task;
 import List.CustomLinkedList;
 
 import java.util.ArrayList;

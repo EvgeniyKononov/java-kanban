@@ -1,9 +1,9 @@
 package Manager;
 
-import Tasks.Epic;
-import Tasks.Status;
-import Tasks.Subtask;
-import Tasks.Task;
+import Task.Epic;
+import Task.Status;
+import Task.Subtask;
+import Task.Task;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -30,6 +30,13 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     public InMemoryTaskManager(ArrayList<Task> tasks, ArrayList<Epic> epics, ArrayList<Subtask> subtasks) {
+        this.tasks = tasks;
+        this.epics = epics;
+        this.subtasks = subtasks;
+    }
+
+    public InMemoryTaskManager(Integer id, ArrayList<Task> tasks, ArrayList<Epic> epics, ArrayList<Subtask> subtasks) {
+        this.id = id;
         this.tasks = tasks;
         this.epics = epics;
         this.subtasks = subtasks;
@@ -288,5 +295,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     public ArrayList<Subtask> getSubtasks() {
         return subtasks;
+    }
+
+    public Integer getId() {
+        return id;
     }
 }

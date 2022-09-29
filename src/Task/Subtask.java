@@ -1,4 +1,4 @@
-package Tasks;
+package Task;
 
 import static java.lang.Integer.parseInt;
 

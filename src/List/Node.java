@@ -1,6 +1,6 @@
 package List;
 
-import Tasks.Task;
+import Task.Task;
 
 public class Node {
     private Task task;

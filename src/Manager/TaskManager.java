@@ -1,8 +1,8 @@
 package Manager;
 
-import Tasks.Epic;
-import Tasks.Subtask;
-import Tasks.Task;
+import Task.Epic;
+import Task.Subtask;
+import Task.Task;
 
 import java.util.ArrayList;
 
