@@ -4,18 +4,16 @@ import Task.Epic;
 import Task.Subtask;
 import Task.Task;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Objects;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
-    private File file;
+    private final File file;
 
     public FileBackedTasksManager(File file) {
         this.file = file;
+        createDirIfNotExist(file);
     }
 
     public FileBackedTasksManager(Integer id, ArrayList<Task> tasks, ArrayList<Epic> epics,
@@ -24,7 +22,21 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         this.file = file;
     }
 
+    private void createDirIfNotExist(File file){
+        String path = file.getPath();
+        int index = 0;
+        while (path.indexOf(92, index) > 0) {
+            index = path.indexOf(92, index);
+            File dirPath = new File(path.substring(0, index));
+            if (!dirPath.exists()) {
+                dirPath.mkdir();
+            }
+            index++;
+        }
+    }
+
     private void save() {
+
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
             bufferedWriter.write("id,type,name,status,description,epic");
             bufferedWriter.newLine();
@@ -170,13 +182,5 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         HistoryManager historyManager = super.getInMemoryHistoryManager();
         save();
         return historyManager;
-    }
-
-    public File getFile() {
-        return file;
-    }
-
-    public void setFile(File file) {
-        this.file = file;
     }
 }

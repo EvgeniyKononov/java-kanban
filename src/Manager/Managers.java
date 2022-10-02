@@ -2,21 +2,15 @@ package Manager;
 
 import Task.*;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import static java.lang.Integer.parseInt;
 
 public class Managers {
-
-    public TaskManager getDefault() {
-        return new InMemoryTaskManager();
-    }
 
     public static HistoryManager getDefaultHistory() {
         return new InMemoryHistoryManager();
@@ -27,43 +21,41 @@ public class Managers {
         String stringHistory;
         ArrayList<Task> historyTasks = manager.getHistory();
         for (Task task : historyTasks) {
-            builderHistory.append(task.getId() + ",");
+            builderHistory.append(task.getId()).append(",");
         }
         stringHistory = String.valueOf(builderHistory);
         return stringHistory;
     }
 
-    public static List<Integer> historyFromString(String value) {
-        List<Integer> history = new ArrayList<>();
-        String[] split = value.split(",");
-        for (int i = 0; i < split.length; i++) {
-            history.add(parseInt(split[i]));
-        }
-        return history;
-    }
-
     public static FileBackedTasksManager loadFromFile(File file) {
         String fileContents = readFileContentsOrNull(file);
         String[] lines = divideString(fileContents);
-        InMemoryTaskManager inMemoryTaskManager = convertStringsToInMemoryTaskManager(lines);
-        HistoryManager inMemoryHistoryManager = convertStringToHistoryManager(lines, inMemoryTaskManager);
-        return new FileBackedTasksManager(inMemoryTaskManager.getId(), inMemoryTaskManager.getTasks(),
-                inMemoryTaskManager.getEpics(), inMemoryTaskManager.getSubtasks(), inMemoryHistoryManager, file);
+        if (lines != null) {
+            InMemoryTaskManager inMemoryTaskManager = convertStringsToInMemoryTaskManager(lines);
+            HistoryManager inMemoryHistoryManager = convertStringToHistoryManager(lines, inMemoryTaskManager);
+
+            return new FileBackedTasksManager(inMemoryTaskManager.getId(), inMemoryTaskManager.getTasks(),
+                    inMemoryTaskManager.getEpics(), inMemoryTaskManager.getSubtasks(), inMemoryHistoryManager, file);
+        } else
+            return new FileBackedTasksManager(file);
     }
 
     public static HistoryManager convertStringToHistoryManager(String[] lines,
                                                                InMemoryTaskManager inMemoryTaskManager) {
-        HistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
-        String[] history = lines[lines.length - 1].split(",");
-        for (int i = 0; i < history.length; i++) {
-            int taskId = parseInt(history[i]);
-            inMemoryHistoryManager.add(inMemoryTaskManager.getAnyTaskById(taskId));
-        }
-        return inMemoryHistoryManager;
+        if (lines[lines.length - 1].length() != 0) {
+            HistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
+            String[] history = lines[lines.length - 1].split(",");
+            for (String s : history) {
+                int taskId = parseInt(s);
+                inMemoryHistoryManager.add(inMemoryTaskManager.getAnyTaskById(taskId));
+            }
+            return inMemoryHistoryManager;
+        } else
+            return new InMemoryHistoryManager();
     }
 
     public static InMemoryTaskManager convertStringsToInMemoryTaskManager(String[] lines) {
-        Integer id = 0;
+        int id = 1;
         ArrayList<Task> tasks = new ArrayList<>();
         ArrayList<Epic> epics = new ArrayList<>();
         ArrayList<Subtask> subtasks = new ArrayList<>();
@@ -109,6 +101,7 @@ public class Managers {
         try {
             return Files.readString(Path.of(file.getCanonicalPath()));
         } catch (IOException exception) {
+            System.out.println("Невозможно прочитать файл из указанного пути. Создаём новый");
             return null;
         }
     }

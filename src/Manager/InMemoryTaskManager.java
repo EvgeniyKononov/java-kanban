@@ -17,22 +17,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected ArrayList<Subtask> subtasks = new ArrayList<>();
     protected HistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
 
-    public InMemoryTaskManager(Integer id, ArrayList<Task> tasks, ArrayList<Epic> epics,
-                               ArrayList<Subtask> subtasks, HistoryManager inMemoryHistoryManager) {
-        this.id = id;
-        this.tasks = tasks;
-        this.epics = epics;
-        this.subtasks = subtasks;
-        this.inMemoryHistoryManager = inMemoryHistoryManager;
-    }
-
     public InMemoryTaskManager() {
-    }
-
-    public InMemoryTaskManager(ArrayList<Task> tasks, ArrayList<Epic> epics, ArrayList<Subtask> subtasks) {
-        this.tasks = tasks;
-        this.epics = epics;
-        this.subtasks = subtasks;
     }
 
     public InMemoryTaskManager(Integer id, ArrayList<Task> tasks, ArrayList<Epic> epics, ArrayList<Subtask> subtasks) {
@@ -40,6 +25,15 @@ public class InMemoryTaskManager implements TaskManager {
         this.tasks = tasks;
         this.epics = epics;
         this.subtasks = subtasks;
+    }
+
+    public InMemoryTaskManager(Integer id, ArrayList<Task> tasks, ArrayList<Epic> epics,
+                               ArrayList<Subtask> subtasks, HistoryManager inMemoryHistoryManager) {
+        this.id = id;
+        this.tasks = tasks;
+        this.epics = epics;
+        this.subtasks = subtasks;
+        this.inMemoryHistoryManager = inMemoryHistoryManager;
     }
 
     private void updateEpicStatus(ArrayList<Epic> epics) {

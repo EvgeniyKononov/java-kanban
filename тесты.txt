@@ -1,16 +1,14 @@
-import Manager.FileBackedTasksManager;
-import Manager.Managers;
-import Task.Epic;
-import Task.Subtask;
-import Task.Task;
+        FileBackedTasksManager manager1 = Managers.loadFromFile(new File("Resources/tasks.csv"));
+        Task task77 = new Task("задача 77", "описание 77");
+        manager1.addTask(task77);
+      manager1.getAnyTaskById(task77.getId());
+      System.out.println(manager1.getInMemoryHistoryManager().getHistory());
 
-import java.io.File;
+++++++++++++++++++++++++++++++++++++++++++++++++++
 
-public class Main {
-    public static void main(String[] args) {
-        FileBackedTasksManager manager =
-                new FileBackedTasksManager(new File("Resource/tasks.csv"));
-        Task task1 = new Task("задача 1", "описание 1");
+FileBackedTasksManager manager =
+                new FileBackedTasksManager(new File("Resources/tasks.csv"));
+      Task task1 = new Task("задача 1", "описание 1");
         manager.addTask(task1);
         Task task2 = new Task("задача 2", "описание 2");
         manager.addTask(task2);
@@ -46,10 +44,27 @@ public class Main {
         System.out.println(manager.getInMemoryHistoryManager().getHistory());
         manager.removeAnyTaskById(epic1.getId());
         System.out.println(manager.getInMemoryHistoryManager().getHistory());
-        FileBackedTasksManager manager1 = Managers.loadFromFile(new File("Resource/tasks.csv"));
-        Task task3 = new Task("задача 3", "описание 3");
-        manager1.addTask(task3);
-        manager1.getAnyTaskById(task3.getId());
-        System.out.println(manager1.getInMemoryHistoryManager().getHistory());
-    }
-}
+
++++++++++++++++++++++++++++++++++++++++++++++++++++
+id,type,name,status,description,epic
+2,TASK,задача 2,NEW,описание 2,
+7,EPIC,эпик 2,NEW,описание 7,
+
+2,7,
+
++++++++++++++++++++++++++++++++++++++++++++++++
+id,type,name,status,description,epic
+2,TASK,задача 2,NEW,описание 2,
+8,TASK,задача 77,NEW,описание 77,
+7,EPIC,эпик 2,NEW,описание 7,
+
+7,8,
+
+++++++++++++++++++++++++++++++++++++++++++++
+id,type,name,status,description,epic
+2,TASK,задача 2,NEW,описание 2,
+8,TASK,задача 3,NEW,описание 3,
+7,EPIC,эпик 2,NEW,описание 7,
+
+2,7,8,
+++++++++++++++++++++++++++++++++++++++++++++

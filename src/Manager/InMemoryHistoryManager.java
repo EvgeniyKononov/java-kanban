@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private CustomLinkedList historyTasks = new CustomLinkedList();
+    private final CustomLinkedList historyTasks = new CustomLinkedList();
 
     @Override
     public ArrayList<Task> getHistory() {
@@ -37,13 +37,5 @@ public class InMemoryHistoryManager implements HistoryManager {
         return "InMemoryHistoryManager{" +
                 "historyTasks=" + historyTasks +
                 '}';
-    }
-
-    public CustomLinkedList getHistoryTasks() {
-        return historyTasks;
-    }
-
-    public void setHistoryTasks(CustomLinkedList historyTasks) {
-        this.historyTasks = historyTasks;
     }
 }

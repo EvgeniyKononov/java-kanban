@@ -7,6 +7,9 @@ public class Subtask extends Task {
 
     private final Type type = Type.SUBTASK;
 
+    public Subtask() {
+    }
+
     public Subtask(String name, String description, Integer epicId) {
         super(name, description);
         this.epicId = epicId;
@@ -14,9 +17,6 @@ public class Subtask extends Task {
 
     public Subtask(String name, String description, Integer id, Status status) {
         super(name, description, id, status);
-    }
-
-    public Subtask() {
     }
 
     @Override

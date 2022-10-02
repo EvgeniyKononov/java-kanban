@@ -31,7 +31,6 @@ public class CustomLinkedList {
         } else {
             node.getNext().setPrev(node.getPrev());
         }
-        node = null;
     }
 
     public void add(Task task) {
