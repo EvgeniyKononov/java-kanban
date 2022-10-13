@@ -5,10 +5,8 @@ import Task.Status;
 import Task.Subtask;
 import Task.Task;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import java.time.LocalDateTime;
+import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
     protected Integer id = 1;
@@ -35,6 +33,66 @@ public class InMemoryTaskManager implements TaskManager {
         this.subtasks = subtasks;
         this.inMemoryHistoryManager = inMemoryHistoryManager;
     }
+
+    private boolean checkPossibilityToCreateTaskAtThisTime(Task task) {
+        LocalDateTime taskStartTime = task.getStartTime();
+        boolean isPossible = true;
+        if (Objects.equals(taskStartTime, null)) {
+            return isPossible;
+        }
+        for (Task checkedTask : tasks) {
+            if (Objects.equals(checkedTask.getStartTime(), null)) {
+                break;
+            }
+            if (taskStartTime.isAfter(checkedTask.getStartTime())
+                    && taskStartTime.isBefore(checkedTask.getEndTime())
+                    || taskStartTime.equals(checkedTask.getStartTime())
+                    || taskStartTime.equals(checkedTask.getEndTime())
+            ) {
+                isPossible = false;
+                return isPossible;
+            }
+        }
+        for (Subtask checkedSubtask : subtasks) {
+            if (Objects.equals(checkedSubtask.getStartTime(), null)) {
+                break;
+            }
+            if (taskStartTime.isAfter(checkedSubtask.getStartTime())
+                    && taskStartTime.isBefore(checkedSubtask.getEndTime())
+                    && taskStartTime.equals(checkedSubtask.getStartTime())
+                    && taskStartTime.equals(checkedSubtask.getEndTime())) {
+                isPossible = false;
+                return isPossible;
+            }
+        }
+        return isPossible;
+    }
+
+    private void updateEpicTime(ArrayList<Epic> epics) {
+        for (Epic epic : epics) {
+            Integer duration = 0;
+            LocalDateTime startTime = LocalDateTime.MAX;
+            LocalDateTime endTime = LocalDateTime.MIN;
+            ;
+            for (Integer subtaskId : epic.getSubtaskID()) {
+                Subtask subtask = getSubtaskById(subtaskId);
+                if (Objects.equals(subtask.getDuration(), null)) {
+                    break;
+                }
+                duration += subtask.getDuration();
+                if (startTime.isAfter(subtask.getStartTime())) {
+                    startTime = subtask.getStartTime();
+                }
+                if (endTime.isBefore(subtask.getEndTime())) {
+                    endTime = subtask.getEndTime();
+                }
+                epic.setDuration(duration);
+                epic.setStartTime(startTime);
+                epic.setEndTime(endTime);
+            }
+        }
+    }
+
 
     private void updateEpicStatus(ArrayList<Epic> epics) {
         for (Epic epic : epics) {
@@ -68,6 +126,27 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
+    public LinkedList<Integer> getPrioritizedTasks() {
+        LinkedList<Integer> prioritizedTasksById = new LinkedList<>();
+        TreeMap<LocalDateTime, Integer> prioritizedTasks = new TreeMap<>();
+        for (Task task : tasks) {
+            if (Objects.equals(task.getStartTime(), null)) {
+                task.setStartTime(LocalDateTime.MAX);
+            }
+            prioritizedTasks.put(task.getStartTime(), task.getId());
+        }
+        for (Subtask subtask : subtasks) {
+            if (Objects.equals(subtask.getStartTime(), null)) {
+                subtask.setStartTime(LocalDateTime.MAX);
+            }
+            prioritizedTasks.put(subtask.getStartTime(), subtask.getId());
+        }
+        for (Map.Entry<LocalDateTime, Integer> set : prioritizedTasks.entrySet())
+            prioritizedTasksById.add(set.getValue());
+        return prioritizedTasksById;
+    }
+
+    @Override
     public ArrayList<Task> getAllTasks() {
         return tasks;
     }
@@ -91,6 +170,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
         subtasks.clear();
         updateEpicStatus(epics);
+        updateEpicTime(epics);
     }
 
     @Override
@@ -111,24 +191,34 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task getAnyTaskById(Integer id) {
+        if (tasks.isEmpty() && epics.isEmpty() && subtasks.isEmpty()) {
+            throw new NullPointerException("Список задач пуст");
+        }
+        boolean isTaskExist = false;
         Task taskById = new Task();
         for (Task task : tasks) {
             if (Objects.equals(task.getId(), id)) {
                 taskById = task;
+                isTaskExist = true;
                 break;
             }
         }
         for (Epic epic : epics) {
             if (Objects.equals(epic.getId(), id)) {
                 taskById = epic;
+                isTaskExist = true;
                 break;
             }
         }
         for (Subtask subtask : subtasks) {
             if (Objects.equals(subtask.getId(), id)) {
                 taskById = subtask;
+                isTaskExist = true;
                 break;
             }
+        }
+        if (!isTaskExist) {
+            throw new NoSuchElementException("Нет задачи с таким номером");
         }
         inMemoryHistoryManager.add(taskById);
         return taskById;
@@ -136,9 +226,11 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void addTask(Task task) {
-        task.setId(id);
-        tasks.add(task);
-        id++;
+        if (checkPossibilityToCreateTaskAtThisTime(task)) {
+            task.setId(id);
+            tasks.add(task);
+            id++;
+        }
     }
 
     @Override
@@ -150,66 +242,112 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void addSubtask(Subtask subtask) {
-        subtask.setId(id);
-        id++;
-        subtasks.add(subtask);
-        for (Epic epic : epics) {
-            if (Objects.equals(epic.getId(), subtask.getEpicId())) {
-                epic.getSubtaskID().add(subtask.getId());
+        if (checkPossibilityToCreateTaskAtThisTime(subtask)) {
+            subtask.setId(id);
+            id++;
+            int subtaskEpicId = subtask.getEpicId();
+            boolean isEpicExist = false;
+            for (Epic epic : epics) {
+                if (Objects.equals(epic.getId(), subtaskEpicId)) {
+                    epic.getSubtaskID().add(subtask.getId());
+                    isEpicExist = true;
+                }
+            }
+            if (isEpicExist) {
+                subtasks.add(subtask);
+                updateEpicStatus(epics);
+                updateEpicTime(epics);
+            } else {
+                id--;
+                throw new RuntimeException("Нет Эпика с таким ID");
             }
         }
-        updateEpicStatus(epics);
     }
 
     @Override
     public void amendTask(Task updatedTask) {
-        for (Task task : tasks) {
-            if (Objects.equals(task.getId(), updatedTask.getId())) {
-                tasks.set(tasks.indexOf(task), updatedTask);
-                break;
+        if (tasks.isEmpty()) {
+            throw new NullPointerException("Список задач пуст");
+        }
+        if (checkPossibilityToCreateTaskAtThisTime(updatedTask)) {
+            boolean isTaskExist = false;
+            for (Task task : tasks) {
+                if (Objects.equals(task.getId(), updatedTask.getId())) {
+                    tasks.set(tasks.indexOf(task), updatedTask);
+                    isTaskExist = true;
+                    break;
+                }
+            }
+            if (!isTaskExist) {
+                throw new NoSuchElementException("Нет задачи с таким номером");
             }
         }
     }
 
     @Override
     public void amendEpic(Epic updatedTask) {
+        if (epics.isEmpty()) {
+            throw new NullPointerException("Список эпиков пуст");
+        }
+        boolean isEpicExist = false;
         for (Epic epic : epics) {
             if (Objects.equals(epic.getId(), updatedTask.getId())) {
                 updatedTask.setSubtaskID(epic.getSubtaskID());
                 updatedTask.setStatus(epic.getStatus());
                 epics.set(epics.indexOf(epic), updatedTask);
+                isEpicExist = true;
                 break;
             }
+        }
+        if (!isEpicExist) {
+            throw new NoSuchElementException("Нет эпиков с таким номером");
         }
     }
 
     @Override
     public void amendSubtask(Subtask updatedTask) {
-        for (Subtask subtask : subtasks) {
-            if (Objects.equals(subtask.getId(), updatedTask.getId())) {
-                int index = subtasks.indexOf(subtask);
-                subtasks.set(index, updatedTask);
+        if (subtasks.isEmpty()) {
+            throw new NullPointerException("Список подзадач пуст");
+        }
+        if (checkPossibilityToCreateTaskAtThisTime(updatedTask)) {
+            boolean isSubtaskExist = false;
+            for (Subtask subtask : subtasks) {
+                if (Objects.equals(subtask.getId(), updatedTask.getId())) {
+                    int index = subtasks.indexOf(subtask);
+                    subtasks.set(index, updatedTask);
+                    isSubtaskExist = true;
+                }
+            }
+            updateEpicStatus(epics);
+            updateEpicTime(epics);
+            if (!isSubtaskExist) {
+                throw new NoSuchElementException("Нет подзадачи с таким номером");
             }
         }
-        updateEpicStatus(epics);
     }
 
     @Override
     public void removeAnyTaskById(Integer id) {
+        if (tasks.isEmpty() && epics.isEmpty() && subtasks.isEmpty()) {
+            throw new NullPointerException("Список задач пуст");
+        }
+        boolean isTaskExist = false;
         for (Task task : tasks) {
             if (Objects.equals(task.getId(), id)) {
                 tasks.remove(task);
+                isTaskExist = true;
                 break;
             }
         }
         for (Epic epic : epics) {
             if (Objects.equals(epic.getId(), id)) {
                 epics.remove(epic);
+                isTaskExist = true;
                 break;
             }
         }
         List<Task> subtaskList = new ArrayList<>();
-        Iterator <Subtask> subtaskIterator = subtasks.iterator();
+        Iterator<Subtask> subtaskIterator = subtasks.iterator();
         while (subtaskIterator.hasNext()) {
             Subtask subtask = subtaskIterator.next();
             if (Objects.equals(subtask.getEpicId(), id)) {
@@ -218,32 +356,59 @@ public class InMemoryTaskManager implements TaskManager {
             }
             if (Objects.equals(subtask.getId(), id)) {
                 subtasks.remove(subtask);
+                for (Epic epic : epics) {
+                    if (Objects.equals(subtask.getEpicId(), epic.getId())) {
+                        epic.getSubtaskID().remove(subtask.getId());
+                        break;
+                    }
+                }
+                isTaskExist = true;
             }
         }
         updateEpicStatus(epics);
+        updateEpicTime(epics);
         inMemoryHistoryManager.removeList(subtaskList);
         inMemoryHistoryManager.remove(id);
+        if (!isTaskExist) {
+            throw new NoSuchElementException("Нет задачи с таким номером");
+        }
     }
 
     @Override
     public ArrayList<Subtask> getAllSubtaskByEpicId(Integer id) {
+        if (epics.isEmpty()) {
+            throw new NullPointerException("Список эпиков пуст");
+        }
+        boolean isSubtaskExist = false;
         ArrayList<Subtask> subtasksList = new ArrayList<>();
         for (Subtask subtask : subtasks) {
             if (Objects.equals(subtask.getEpicId(), id)) {
                 subtasksList.add(subtask);
+                isSubtaskExist = true;
             }
+        }
+        if (!isSubtaskExist) {
+            throw new NoSuchElementException("Нет эпиков с таким номером");
         }
         return subtasksList;
     }
 
     @Override
     public Task getTaskById(Integer id) {
+        if (tasks.isEmpty()) {
+            throw new NullPointerException("Список задач пуст");
+        }
+        boolean isTaskExist = false;
         Task taskById = new Task();
         for (Task task : tasks) {
             if (Objects.equals(task.getId(), id)) {
                 taskById = task;
+                isTaskExist = true;
                 break;
             }
+        }
+        if (!isTaskExist) {
+            throw new NoSuchElementException("Нет задачи с таким номером");
         }
         inMemoryHistoryManager.add(taskById);
         return taskById;
@@ -251,12 +416,20 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Epic getEpicById(Integer id) {
+        if (epics.isEmpty()) {
+            throw new NullPointerException("Список эпиков пуст");
+        }
+        boolean isEpicExist = false;
         Epic epicById = new Epic();
         for (Epic epic : epics) {
             if (Objects.equals(epic.getId(), id)) {
                 epicById = epic;
+                isEpicExist = true;
                 break;
             }
+        }
+        if (!isEpicExist) {
+            throw new NoSuchElementException("Нет эпика с таким номером");
         }
         inMemoryHistoryManager.add(epicById);
         return epicById;
@@ -264,12 +437,20 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Subtask getSubtaskById(Integer id) {
+        if (subtasks.isEmpty()) {
+            throw new NullPointerException("Список подзадач пуст");
+        }
+        boolean isSubtaskExist = false;
         Subtask subtaskById = new Subtask();
         for (Subtask subtask : subtasks) {
             if (Objects.equals(subtask.getId(), id)) {
                 subtaskById = subtask;
+                isSubtaskExist = true;
                 break;
             }
+        }
+        if (!isSubtaskExist) {
+            throw new NoSuchElementException("Нет подзадачи с таким номером");
         }
         inMemoryHistoryManager.add(subtaskById);
         return subtaskById;

@@ -1,5 +1,7 @@
 package Task;
 
+import java.time.LocalDateTime;
+
 import static java.lang.Integer.parseInt;
 
 public class Subtask extends Task {
@@ -17,6 +19,11 @@ public class Subtask extends Task {
 
     public Subtask(String name, String description, Integer id, Status status) {
         super(name, description, id, status);
+    }
+
+    public Subtask(String name, String description, Integer epicId, Integer duration, LocalDateTime startTime) {
+        super(name, description, duration, startTime);
+        this.epicId = epicId;
     }
 
     @Override

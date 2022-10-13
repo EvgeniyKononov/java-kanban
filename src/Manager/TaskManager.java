@@ -5,6 +5,7 @@ import Task.Subtask;
 import Task.Task;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public interface TaskManager {
     void addTask(Task task);
@@ -44,4 +45,6 @@ public interface TaskManager {
     Task getAnyTaskById(Integer id);
 
     HistoryManager getInMemoryHistoryManager();
+
+    LinkedList<Integer> getPrioritizedTasks();
 }

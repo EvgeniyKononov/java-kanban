@@ -1,5 +1,6 @@
 package Task;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import static java.lang.Integer.parseInt;
@@ -7,6 +8,8 @@ import static java.lang.Integer.parseInt;
 public class Epic extends Task {
     private ArrayList<Integer> subtaskID;
     private final Type type = Type.EPIC;
+
+    private LocalDateTime endTime;
 
     public Epic() {
         this.subtaskID = new ArrayList<>();
@@ -18,13 +21,22 @@ public class Epic extends Task {
     }
 
     public Epic(String name, String description, Integer id) {
-        super(name, description, id);
+        super(name, description, id, Status.NEW);
     }
 
     @Override
     public String toString() {
         return String.format("%s,%s,%s,%s,%s,", this.getId(), this.type, this.getName(), this.getStatus(),
                 this.getDescription());
+    }
+
+    @Override
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
     }
 
     public Epic fromString(String value) {

@@ -1,5 +1,6 @@
 package Task;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static java.lang.Integer.parseInt;
@@ -10,6 +11,9 @@ public class Task {
     private String description;
     private Status status;
     private final Type type = Type.TASK;
+    private Integer duration;
+    private LocalDateTime startTime;
+
 
     public Task() {
     }
@@ -34,6 +38,13 @@ public class Task {
         this.status = status;
     }
 
+    public Task(String name, String description, Integer duration, LocalDateTime startTime) {
+        this.name = name;
+        this.description = description;
+        this.duration = duration;
+        this.startTime = startTime;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -53,6 +64,10 @@ public class Task {
     @Override
     public String toString() {
         return String.format("%s,%s,%s,%s,%s,", this.id, this.type, this.name, this.status, this.description);
+    }
+
+    public LocalDateTime getEndTime() {
+        return this.startTime.plusMinutes(this.duration);
     }
 
     public Task fromString(String value) {
@@ -95,5 +110,21 @@ public class Task {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Integer getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Integer duration) {
+        this.duration = duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
     }
 }

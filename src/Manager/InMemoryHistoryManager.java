@@ -24,6 +24,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         historyTasks.remove(id);
     }
 
+    @Override
     public void removeList(List<Task> taskList) {
         if (taskList != null) {
             for (Task task : taskList) {
@@ -37,5 +38,9 @@ public class InMemoryHistoryManager implements HistoryManager {
         return "InMemoryHistoryManager{" +
                 "historyTasks=" + historyTasks +
                 '}';
+    }
+
+    public CustomLinkedList getHistoryTasks() {
+        return historyTasks;
     }
 }
