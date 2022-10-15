@@ -352,6 +352,19 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<InMemoryTaskMana
         assertEquals(3, manager1.getInMemoryHistoryManager().getHistory().size());
     }
 
+    @Test
+    void test59_writeReadFinalTest() {
+        Task task1 = new Task("задача 1", "описание 1");
+        taskManager.addTask(task1);
+        taskManager.getAnyTaskById(task1.getId());
+        FileBackedTasksManager manager1 =
+                Managers.loadFromFile(new File("Z:\\Users\\tolst\\IdeaProjects\\java-kanban\\Resource"));
+        Task task3 = new Task("задача 3", "описание 3");
+      //  manager1.addTask(task3);
+        assertThrows(ManagerSaveException.class, () -> manager1.addTask(task3));
+
+    }
+
 }
 
 

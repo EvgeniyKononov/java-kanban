@@ -45,27 +45,6 @@ public class Task {
         this.startTime = startTime;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Task task = (Task) o;
-        return name.equals(task.name)
-                && description.equals(task.description)
-                && id.equals(task.id)
-                && status == task.status;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, description, id, status);
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%s,%s,%s,%s,%s,", this.id, this.type, this.name, this.status, this.description);
-    }
-
     public LocalDateTime getEndTime() {
         return this.startTime.plusMinutes(this.duration);
     }
@@ -126,5 +105,26 @@ public class Task {
 
     public void setStartTime(LocalDateTime startTime) {
         this.startTime = startTime;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, description, id, status);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s,%s,%s,%s,%s,", this.id, this.type, this.name, this.status, this.description);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return name.equals(task.name)
+                && description.equals(task.description)
+                && id.equals(task.id)
+                && status == task.status;
     }
 }

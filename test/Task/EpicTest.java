@@ -23,7 +23,8 @@ public class EpicTest {
             "THEN the Epic status is NEW")
     @Test
     public void test1_EpicStatusIsNewWhenSubtaskListIsEmpty() {
-        assertEquals(Status.NEW, newEpic.getStatus());
+        assertEquals(0, newEpic.getSubtaskID().size());
+        assertEquals(Status.NEW, inMemoryTaskManager.getAnyTaskById(1).getStatus());
     }
 
     @DisplayName("GIVEN a new instance InMemoryTaskManager " +
@@ -35,7 +36,9 @@ public class EpicTest {
         Subtask subtask2 = new Subtask("Subtask 2", "Subtask Description 2", 1);
         inMemoryTaskManager.addSubtask(subtask1);
         inMemoryTaskManager.addSubtask(subtask2);
-        assertEquals(Status.NEW, newEpic.getStatus());
+        assertEquals(Status.NEW, inMemoryTaskManager.getAnyTaskById(2).getStatus());
+        assertEquals(Status.NEW, inMemoryTaskManager.getAnyTaskById(3).getStatus());
+        assertEquals(Status.NEW, inMemoryTaskManager.getAnyTaskById(1).getStatus());
     }
 
     @DisplayName("GIVEN a new instance InMemoryTaskManager " +
@@ -49,7 +52,9 @@ public class EpicTest {
         inMemoryTaskManager.addSubtask(subtask2);
         inMemoryTaskManager.amendSubtask(new Subtask("Subtask 1", "Subtask Description 1", 2, Status.DONE));
         inMemoryTaskManager.amendSubtask(new Subtask("Subtask 2", "Subtask Description 2", 3, Status.DONE));
-        assertEquals(Status.DONE, newEpic.getStatus());
+        assertEquals(Status.DONE, inMemoryTaskManager.getAnyTaskById(2).getStatus());
+        assertEquals(Status.DONE, inMemoryTaskManager.getAnyTaskById(3).getStatus());
+        assertEquals(Status.DONE, inMemoryTaskManager.getAnyTaskById(1).getStatus());
     }
 
     @DisplayName("GIVEN a new instance InMemoryTaskManager " +
@@ -62,7 +67,9 @@ public class EpicTest {
         inMemoryTaskManager.addSubtask(subtask1);
         inMemoryTaskManager.addSubtask(subtask2);
         inMemoryTaskManager.amendSubtask(new Subtask("Subtask 1", "Subtask Description 1", 2, Status.DONE));
-        assertEquals(Status.IN_PROGRESS, newEpic.getStatus());
+        assertEquals(Status.DONE, inMemoryTaskManager.getAnyTaskById(2).getStatus());
+        assertEquals(Status.NEW, inMemoryTaskManager.getAnyTaskById(3).getStatus());
+        assertEquals(Status.IN_PROGRESS, inMemoryTaskManager.getAnyTaskById(1).getStatus());
     }
 
     @DisplayName("GIVEN a new instance InMemoryTaskManager " +
@@ -76,6 +83,8 @@ public class EpicTest {
         inMemoryTaskManager.addSubtask(subtask2);
         inMemoryTaskManager.amendSubtask(new Subtask("Subtask 1", "Subtask Description 1", 2, Status.IN_PROGRESS));
         inMemoryTaskManager.amendSubtask(new Subtask("Subtask 2", "Subtask Description 2", 3, Status.IN_PROGRESS));
-        assertEquals(Status.IN_PROGRESS, newEpic.getStatus());
+        assertEquals(Status.IN_PROGRESS, inMemoryTaskManager.getAnyTaskById(2).getStatus());
+        assertEquals(Status.IN_PROGRESS, inMemoryTaskManager.getAnyTaskById(3).getStatus());
+        assertEquals(Status.IN_PROGRESS, inMemoryTaskManager.getAnyTaskById(1).getStatus());
     }
 }

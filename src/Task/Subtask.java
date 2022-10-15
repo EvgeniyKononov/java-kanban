@@ -26,12 +26,6 @@ public class Subtask extends Task {
         this.epicId = epicId;
     }
 
-    @Override
-    public String toString() {
-        return String.format("%s,%s,%s,%s,%s,%s,", this.getId(), this.type, this.getName(),
-                this.getStatus(), this.getDescription(), this.getEpicId());
-    }
-
     public Subtask fromString(String value) {
         Subtask subtask = new Subtask();
         String[] split = value.split(",");
@@ -49,5 +43,11 @@ public class Subtask extends Task {
 
     public void setEpicId(Integer epicId) {
         this.epicId = epicId;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s,%s,%s,%s,%s,%s,", this.getId(), this.type, this.getName(),
+                this.getStatus(), this.getDescription(), this.getEpicId());
     }
 }
