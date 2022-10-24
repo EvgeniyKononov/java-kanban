@@ -6,6 +6,7 @@ import Task.Task;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.TreeSet;
 
 public interface TaskManager {
     void addTask(Task task);
@@ -46,5 +47,5 @@ public interface TaskManager {
 
     HistoryManager getInMemoryHistoryManager();
 
-    LinkedList<Integer> getPrioritizedTasks();
+    TreeSet<Task> getPrioritizedTasks();
 }

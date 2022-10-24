@@ -1,10 +1,14 @@
 package Manager;
 
+import Server.LocalDateTimeAdapter;
 import Task.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -14,6 +18,10 @@ public class Managers {
 
     public static HistoryManager getDefaultHistory() {
         return new InMemoryHistoryManager();
+    }
+
+    public static FileBackedTasksManager createFileBackedTasksManager(File file){
+        return new FileBackedTasksManager(file);
     }
 
     public static String historyToString(HistoryManager manager) {
@@ -104,5 +112,12 @@ public class Managers {
             System.out.println("Невозможно прочитать файл из указанного пути. Создаём новый");
             return null;
         }
+    }
+
+    public static Gson getGson() {
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter());
+        gsonBuilder.serializeNulls();
+        return gsonBuilder.create();
     }
 }

@@ -14,7 +14,9 @@
           <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/annotations/20.1.0/annotations-20.1.0.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.ideaLibSources/annotations-20.1.0-sources.jar!/" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" scope="TEST">
@@ -36,5 +38,6 @@
         </SOURCES>
       </library>
     </orderEntry>
+    <orderEntry type="library" name="gson-2.9.0" level="project" />
   </component>
 </module>

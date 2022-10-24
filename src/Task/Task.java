@@ -10,12 +10,13 @@ public class Task {
     private String name;
     private String description;
     private Status status;
-    private final Type type = Type.TASK;
+    private Type type;
     private Integer duration;
     private LocalDateTime startTime;
 
 
     public Task() {
+        this.type = Type.TASK;
     }
 
     public Task(String name, String description) {
@@ -23,12 +24,14 @@ public class Task {
         this.description = description;
         this.status = Status.NEW;
         this.id = 0;
+        this.type = Type.TASK;
     }
 
     public Task(String name, String description, Integer id) {
         this.name = name;
         this.description = description;
         this.id = id;
+        this.type = Type.TASK;
     }
 
     public Task(String name, String description, Integer id, Status status) {
@@ -36,6 +39,7 @@ public class Task {
         this.description = description;
         this.id = id;
         this.status = status;
+        this.type = Type.TASK;
     }
 
     public Task(String name, String description, Integer duration, LocalDateTime startTime) {
@@ -43,6 +47,8 @@ public class Task {
         this.description = description;
         this.duration = duration;
         this.startTime = startTime;
+        this.type = Type.TASK;
+        this.status = Status.NEW;
     }
 
     public LocalDateTime getEndTime() {
@@ -56,11 +62,21 @@ public class Task {
         task.name = split[2];
         task.status = Status.valueOf(split[3]);
         task.description = split[4];
+        if(!Objects.equals(split[5], "null")) {
+            task.duration = (parseInt(split[5]));
+        }
+        if(!Objects.equals(split[6], "null")) {
+            task.startTime = LocalDateTime.parse(split[6]);
+        }
         return task;
     }
 
     public Integer getId() {
         return id;
+    }
+
+    public Type getType() {
+        return type;
     }
 
     public String getName() {
@@ -73,6 +89,10 @@ public class Task {
 
     public String getDescription() {
         return description;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
     }
 
     public void setId(Integer id) {
@@ -114,7 +134,8 @@ public class Task {
 
     @Override
     public String toString() {
-        return String.format("%s,%s,%s,%s,%s,", this.id, this.type, this.name, this.status, this.description);
+        return String.format("%s,%s,%s,%s,%s,%s,%s,", this.id, this.type, this.name, this.status,
+                this.description, this.duration, this.startTime);
     }
 
     @Override
@@ -127,4 +148,5 @@ public class Task {
                 && id.equals(task.id)
                 && status == task.status;
     }
+
 }

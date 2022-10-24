@@ -126,24 +126,14 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public LinkedList<Integer> getPrioritizedTasks() {
-        LinkedList<Integer> prioritizedTasksById = new LinkedList<>();
-        TreeMap<LocalDateTime, Integer> prioritizedTasks = new TreeMap<>();
-        for (Task task : tasks) {
-            if (Objects.equals(task.getStartTime(), null)) {
-                task.setStartTime(LocalDateTime.MAX);
-            }
-            prioritizedTasks.put(task.getStartTime(), task.getId());
-        }
-        for (Subtask subtask : subtasks) {
-            if (Objects.equals(subtask.getStartTime(), null)) {
-                subtask.setStartTime(LocalDateTime.MAX);
-            }
-            prioritizedTasks.put(subtask.getStartTime(), subtask.getId());
-        }
-        for (Map.Entry<LocalDateTime, Integer> set : prioritizedTasks.entrySet())
-            prioritizedTasksById.add(set.getValue());
-        return prioritizedTasksById;
+    public TreeSet<Task> getPrioritizedTasks() {
+        Comparator<Task> tasksComparator = Comparator.comparing(Task::getStartTime,
+                        Comparator.nullsLast(Comparator.naturalOrder()))
+                .thenComparing(Task::getId);
+        TreeSet<Task> tasksTreeSet = new TreeSet<>(tasksComparator);
+        tasksTreeSet.addAll(tasks);
+        tasksTreeSet.addAll(subtasks);
+        return tasksTreeSet;
     }
 
     @Override
