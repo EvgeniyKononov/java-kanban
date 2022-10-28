@@ -1,6 +1,5 @@
 package Task;
 
-import java.lang.annotation.Native;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -27,6 +26,7 @@ public class Epic extends Task {
         this.setType(Type.EPIC);
     }
 
+
     @Override
     public LocalDateTime getEndTime() {
         return endTime;
@@ -43,10 +43,10 @@ public class Epic extends Task {
         epic.setName(split[2]);
         epic.setStatus(Status.valueOf(split[3]));
         epic.setDescription(split[4]);
-        if(!Objects.equals(split[5], "null")) {
+        if (!Objects.equals(split[5], "null")) {
             epic.setDuration(parseInt(split[5]));
         }
-        if(!Objects.equals(split[6], "null")) {
+        if (!Objects.equals(split[6], "null")) {
             epic.setStartTime(LocalDateTime.parse(split[6]));
         }
         return epic;

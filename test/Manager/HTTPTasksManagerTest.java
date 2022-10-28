@@ -1,29 +1,18 @@
 package Manager;
 
-import Task.*;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.time.LocalDateTime;
+public class HTTPTasksManagerTest extends TaskManagerTest<InMemoryTaskManager> {
+    HTTPTaskManager taskManager;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-public class FileBackedTasksManagerTest extends TaskManagerTest<InMemoryTaskManager> {
-    FileBackedTasksManager taskManager;
-    File path = new File("Resource/tasks.csv");
 
     @BeforeEach
     void beforeEach() {
-        taskManager = new FileBackedTasksManager(path);
+        taskManager = Managers.getDefault();
         super.taskManager = taskManager;
     }
 
-    @AfterEach
-    void afterEach() {
-        path.delete();
-    }
 
     @Test
     void test1_shouldReturnEqualTasksWhenContainsInManager() {
@@ -309,60 +298,4 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<InMemoryTaskMana
     void test57_checkPossibilityToCreateTaskAtThisTimeTest() {
         super.test57_checkPossibilityToCreateTaskAtThisTimeTest();
     }
-
-    @Test
-    void test58_writeReadFinalTest() {
-        Task task1 = new Task("задача 1", "описание 1");
-        taskManager.addTask(task1);
-        Task task2 = new Task("задача 2", "описание 2");
-        taskManager.addTask(task2);
-        Epic epic1 = new Epic("эпик 1", "описание 3");
-        taskManager.addEpic(epic1);
-        Subtask subtask1 = new Subtask("подзадача 1", "описание 4", epic1.getId());
-        taskManager.addSubtask(subtask1);
-        Subtask subtask2 = new Subtask("подзадача 2", "описание 5", epic1.getId());
-        taskManager.addSubtask(subtask2);
-        Subtask subtask3 = new Subtask("подзадача 3", "описание 6", epic1.getId());
-        taskManager.addSubtask(subtask3);
-        Epic epic2 = new Epic("эпик 2", "описание 7");
-        taskManager.addEpic(epic2);
-        taskManager.getAnyTaskById(task1.getId());
-        taskManager.getAnyTaskById(task2.getId());
-        taskManager.getAnyTaskById(epic1.getId());
-        taskManager.getAnyTaskById(epic2.getId());
-        taskManager.getAnyTaskById(subtask1.getId());
-        taskManager.getAnyTaskById(subtask3.getId());
-        taskManager.getAnyTaskById(subtask2.getId());
-        taskManager.getAnyTaskById(task1.getId());
-        taskManager.getAnyTaskById(epic2.getId());
-        taskManager.removeAnyTaskById(task1.getId());
-        taskManager.removeAnyTaskById(epic1.getId());
-        assertEquals(1, taskManager.getTasks().size());
-        assertEquals(1, taskManager.getEpics().size());
-        assertEquals(0, taskManager.getSubtasks().size());
-        assertEquals(2, taskManager.getInMemoryHistoryManager().getHistory().size());
-        FileBackedTasksManager manager1 = Managers.loadFromFile(new File("Resource/tasks.csv"));
-        assertEquals(1, manager1.getTasks().size());
-        assertEquals(1, manager1.getEpics().size());
-        assertEquals(2, manager1.getInMemoryHistoryManager().getHistory().size());
-        Task task3 = new Task("задача 3", "описание 3");
-        manager1.addTask(task3);
-        manager1.getAnyTaskById(task3.getId());
-        assertEquals(2, manager1.getTasks().size());
-        assertEquals(1, manager1.getEpics().size());
-        assertEquals(3, manager1.getInMemoryHistoryManager().getHistory().size());
-    }
-
-    @Test
-    void test59_writeReadFinalTest() {
-        Task task1 = new Task("задача 1", "описание 1");
-        taskManager.addTask(task1);
-        taskManager.getAnyTaskById(task1.getId());
-        FileBackedTasksManager manager1 =
-                Managers.loadFromFile(new File("Z:\\Users\\tolst\\IdeaProjects\\java-kanban\\Resource"));
-        Task task3 = new Task("задача 3", "описание 3");
-        assertThrows(ManagerSaveException.class, () -> manager1.addTask(task3));
-    }
 }
-
-

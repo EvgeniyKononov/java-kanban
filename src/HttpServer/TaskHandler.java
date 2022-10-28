@@ -1,13 +1,12 @@
-package Server;
+package HttpServer;
 
-import Manager.FileBackedTasksManager;
+import Manager.HTTPTaskManager;
 import Manager.Managers;
 import Task.*;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
@@ -17,8 +16,8 @@ import java.nio.charset.StandardCharsets;
 public class TaskHandler implements HttpHandler {
     public static final String PATH = "/tasks";
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
-    private FileBackedTasksManager fileBackedTasksManager = Managers.loadFromFile(new File("Resource/tasks.csv"));
 
+    private HTTPTaskManager HTTPTaskManager = Managers.getDefault();
     private static Gson gson = Managers.getGson();
 
     @Override
@@ -59,6 +58,7 @@ public class TaskHandler implements HttpHandler {
                 os.write("Путь не найден".getBytes());
             }
         }
+        httpExchange.close();
     }
 
     private void handleGet(HttpExchange httpExchange, String[] splitPath, Integer id) throws IOException {
@@ -100,79 +100,89 @@ public class TaskHandler implements HttpHandler {
             default:
                 throw new IOException();
         }
+        httpExchange.close();
     }
 
 
     private void writePrioritizedTasks(HttpExchange httpExchange) throws IOException {
         httpExchange.sendResponseHeaders(200, 0);
-        String response = gson.toJson(fileBackedTasksManager.getPrioritizedTasks());
+        String response = gson.toJson(HTTPTaskManager.getPrioritizedTasks());
         try (OutputStream os = httpExchange.getResponseBody()) {
             os.write(response.getBytes());
         }
+        httpExchange.close();
     }
 
     private void writeAllTasks(HttpExchange httpExchange) throws IOException {
         httpExchange.sendResponseHeaders(200, 0);
-        String response = gson.toJson(fileBackedTasksManager.getAllTasks());
+        String response = gson.toJson(HTTPTaskManager.getAllTasks());
         try (OutputStream os = httpExchange.getResponseBody()) {
             os.write(response.getBytes());
         }
+        httpExchange.close();
     }
 
     private void writeAllEpics(HttpExchange httpExchange) throws IOException {
         httpExchange.sendResponseHeaders(200, 0);
-        String response = gson.toJson(fileBackedTasksManager.getAllEpics());
+        String response = gson.toJson(HTTPTaskManager.getAllEpics());
         try (OutputStream os = httpExchange.getResponseBody()) {
             os.write(response.getBytes());
         }
+        httpExchange.close();
     }
 
     private void writeAllSubtask(HttpExchange httpExchange) throws IOException {
         httpExchange.sendResponseHeaders(200, 0);
-        String response = gson.toJson(fileBackedTasksManager.getAllSubtasks());
+        String response = gson.toJson(HTTPTaskManager.getAllSubtasks());
         try (OutputStream os = httpExchange.getResponseBody()) {
             os.write(response.getBytes());
         }
+        httpExchange.close();
     }
 
     private void writeHistory(HttpExchange httpExchange) throws IOException {
         httpExchange.sendResponseHeaders(200, 0);
-        String response = gson.toJson(fileBackedTasksManager.getInMemoryHistoryManager().getHistory());
+        String response = gson.toJson(HTTPTaskManager.getInMemoryHistoryManager().getHistory());
         try (OutputStream os = httpExchange.getResponseBody()) {
             os.write(response.getBytes());
         }
+        httpExchange.close();
     }
 
     private void writeTask(HttpExchange httpExchange, Integer id) throws IOException {
         httpExchange.sendResponseHeaders(200, 0);
-        String response = gson.toJson(fileBackedTasksManager.getTaskById(id));
+        String response = gson.toJson(HTTPTaskManager.getTaskById(id));
         try (OutputStream os = httpExchange.getResponseBody()) {
             os.write(response.getBytes());
         }
+        httpExchange.close();
     }
 
     private void writeSubtask(HttpExchange httpExchange, Integer id) throws IOException {
         httpExchange.sendResponseHeaders(200, 0);
-        String response = gson.toJson(fileBackedTasksManager.getSubtaskById(id));
+        String response = gson.toJson(HTTPTaskManager.getSubtaskById(id));
         try (OutputStream os = httpExchange.getResponseBody()) {
             os.write(response.getBytes());
         }
+        httpExchange.close();
     }
 
     private void writeEpic(HttpExchange httpExchange, int id) throws IOException {
         httpExchange.sendResponseHeaders(200, 0);
-        String response = gson.toJson(fileBackedTasksManager.getEpicById(id));
+        String response = gson.toJson(HTTPTaskManager.getEpicById(id));
         try (OutputStream os = httpExchange.getResponseBody()) {
             os.write(response.getBytes());
         }
+        httpExchange.close();
     }
 
     private void writeSubtasksByEpicId(HttpExchange httpExchange, Integer id) throws IOException {
         httpExchange.sendResponseHeaders(200, 0);
-        String response = gson.toJson(fileBackedTasksManager.getAllSubtaskByEpicId(id));
+        String response = gson.toJson(HTTPTaskManager.getAllSubtaskByEpicId(id));
         try (OutputStream os = httpExchange.getResponseBody()) {
             os.write(response.getBytes());
         }
+        httpExchange.close();
     }
 
     private void handlePost(HttpExchange httpExchange, String[] splitPath, Integer id) throws IOException {
@@ -204,72 +214,79 @@ public class TaskHandler implements HttpHandler {
             default:
                 throw new IOException();
         }
+        httpExchange.close();
     }
 
     private void addTask(HttpExchange httpExchange) throws IOException {
         String taskJson = new String(httpExchange.getRequestBody().readAllBytes(), DEFAULT_CHARSET);
         Task task = gson.fromJson(taskJson, Task.class);
         task.setStatus(Status.NEW);
-        fileBackedTasksManager.addTask(task);
+        HTTPTaskManager.addTask(task);
         httpExchange.sendResponseHeaders(200, 0);
         try (OutputStream os = httpExchange.getResponseBody()) {
             os.write("Задача добавлена".getBytes());
         }
+        httpExchange.close();
     }
 
     private void amendTask(HttpExchange httpExchange, Integer id) throws IOException {
         String taskJson = new String(httpExchange.getRequestBody().readAllBytes(), DEFAULT_CHARSET);
         Task task = gson.fromJson(taskJson, Task.class);
         task.setId(id);
-        fileBackedTasksManager.amendTask(task);
+        HTTPTaskManager.amendTask(task);
         httpExchange.sendResponseHeaders(200, 0);
         try (OutputStream os = httpExchange.getResponseBody()) {
             os.write("Задача изменена".getBytes());
         }
+        httpExchange.close();
     }
 
     private void addSubtask(HttpExchange httpExchange) throws IOException {
         String subtaskJson = new String(httpExchange.getRequestBody().readAllBytes(), DEFAULT_CHARSET);
         Subtask subtask = gson.fromJson(subtaskJson, Subtask.class);
         subtask.setStatus(Status.NEW);
-        fileBackedTasksManager.addTask(subtask);
+        HTTPTaskManager.addSubtask(subtask);
         httpExchange.sendResponseHeaders(200, 0);
         try (OutputStream os = httpExchange.getResponseBody()) {
             os.write("Подзадача добавлена".getBytes());
         }
+        httpExchange.close();
     }
 
     private void amendSubtask(HttpExchange httpExchange, Integer id) throws IOException {
         String subtaskJson = new String(httpExchange.getRequestBody().readAllBytes(), DEFAULT_CHARSET);
         Subtask subtask = gson.fromJson(subtaskJson, Subtask.class);
         subtask.setId(id);
-        fileBackedTasksManager.amendSubtask(subtask);
+        HTTPTaskManager.amendSubtask(subtask);
         httpExchange.sendResponseHeaders(200, 0);
         try (OutputStream os = httpExchange.getResponseBody()) {
             os.write("Подзадача изменена".getBytes());
         }
+        httpExchange.close();
     }
 
     private void addEpic(HttpExchange httpExchange) throws IOException {
         String epicJson = new String(httpExchange.getRequestBody().readAllBytes(), DEFAULT_CHARSET);
         Epic epic = gson.fromJson(epicJson, Epic.class);
         epic.setStatus(Status.NEW);
-        fileBackedTasksManager.addTask(epic);
+        HTTPTaskManager.addEpic(epic);
         httpExchange.sendResponseHeaders(200, 0);
         try (OutputStream os = httpExchange.getResponseBody()) {
             os.write("Эпик добавлен".getBytes());
         }
+        httpExchange.close();
     }
 
     private void amendEpic(HttpExchange httpExchange, Integer id) throws IOException {
         String epicJson = new String(httpExchange.getRequestBody().readAllBytes(), DEFAULT_CHARSET);
         Epic epic = gson.fromJson(epicJson, Epic.class);
         epic.setId(id);
-        fileBackedTasksManager.addTask(epic);
+        HTTPTaskManager.amendEpic(epic);
         httpExchange.sendResponseHeaders(200, 0);
         try (OutputStream os = httpExchange.getResponseBody()) {
             os.write("Эпик добавлен".getBytes());
         }
+        httpExchange.close();
     }
 
     private void handleDelete(HttpExchange httpExchange, String[] splitPath, Integer id) throws IOException {
@@ -301,36 +318,43 @@ public class TaskHandler implements HttpHandler {
             default:
                 throw new IOException();
         }
+        httpExchange.close();
     }
+
     private void deleteAllTasks(HttpExchange httpExchange) throws IOException {
         httpExchange.sendResponseHeaders(200, 0);
-        fileBackedTasksManager.removeAllTasks();
+        HTTPTaskManager.removeAllTasks();
         try (OutputStream os = httpExchange.getResponseBody()) {
             os.write("Все задачи удалены".getBytes());
         }
+        httpExchange.close();
     }
 
     private void deleteAnyTaskById(HttpExchange httpExchange, Integer id) throws IOException {
         httpExchange.sendResponseHeaders(200, 0);
-        fileBackedTasksManager.removeAnyTaskById(id);
+        HTTPTaskManager.removeAnyTaskById(id);
         try (OutputStream os = httpExchange.getResponseBody()) {
             os.write("Задача удалена".getBytes());
         }
+        httpExchange.close();
     }
 
     private void deleteAllEpics(HttpExchange httpExchange) throws IOException {
         httpExchange.sendResponseHeaders(200, 0);
-        fileBackedTasksManager.removeAllEpics();
+        HTTPTaskManager.removeAllEpics();
         try (OutputStream os = httpExchange.getResponseBody()) {
             os.write("Все задачи удалены".getBytes());
         }
+        httpExchange.close();
     }
 
     private void deleteAllSubtasks(HttpExchange httpExchange) throws IOException {
         httpExchange.sendResponseHeaders(200, 0);
-        fileBackedTasksManager.removeAllSubtasks();
+        HTTPTaskManager.removeAllSubtasks();
         try (OutputStream os = httpExchange.getResponseBody()) {
             os.write("Все задачи удалены".getBytes());
         }
+        httpExchange.close();
     }
 }
+

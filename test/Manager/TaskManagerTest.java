@@ -1,11 +1,13 @@
 package Manager;
 
 import Task.*;
+import com.google.gson.Gson;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import static Task.Status.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public abstract class TaskManagerTest<T extends TaskManager> {
 
     protected T taskManager;
+    private static Gson gson = Managers.getGson();
 
     @Test
     void test1_shouldReturnEqualTasksWhenContainsInManager() {
@@ -592,12 +595,12 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.addSubtask(subtask1);
         taskManager.addSubtask(subtask2);
         taskManager.addTask(task3);
-        LinkedList<Integer> expectedList = new LinkedList<>();
-        expectedList.add(5);
-        expectedList.add(2);
-        expectedList.add(4);
-        expectedList.add(1);
-        expectedList.add(6);
+        Set<Task> expectedList = new HashSet<>();
+        expectedList.add(taskManager.getAnyTaskById(5));
+        expectedList.add(taskManager.getAnyTaskById(2));
+        expectedList.add(taskManager.getAnyTaskById(4));
+        expectedList.add(taskManager.getAnyTaskById(1));
+        expectedList.add(taskManager.getAnyTaskById(6));
         assertEquals(expectedList, taskManager.getPrioritizedTasks());
     }
 

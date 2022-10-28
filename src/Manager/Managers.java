@@ -1,6 +1,6 @@
 package Manager;
 
-import Server.LocalDateTimeAdapter;
+import HttpServer.LocalDateTimeAdapter;
 import Task.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -15,12 +15,15 @@ import java.util.Objects;
 import static java.lang.Integer.parseInt;
 
 public class Managers {
+    public static HTTPTaskManager getDefault() {
+        return new HTTPTaskManager("http://localhost:8078/");
+    }
 
     public static HistoryManager getDefaultHistory() {
         return new InMemoryHistoryManager();
     }
 
-    public static FileBackedTasksManager createFileBackedTasksManager(File file){
+    public static FileBackedTasksManager createFileBackedTasksManager(File file) {
         return new FileBackedTasksManager(file);
     }
 

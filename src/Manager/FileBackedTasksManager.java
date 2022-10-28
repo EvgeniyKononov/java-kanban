@@ -22,7 +22,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         this.file = file;
     }
 
-    private void createDirIfNotExist(File file){
+    private void createDirIfNotExist(File file) {
         String path = file.getPath();
         int index = 0;
         while (path.indexOf(92, index) > 0) {
@@ -35,7 +35,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    private void save() {
+    protected void save() {
 
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
             bufferedWriter.write("id,type,name,status,description,epic");

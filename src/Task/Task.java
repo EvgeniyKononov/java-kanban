@@ -1,6 +1,7 @@
 package Task;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Objects;
 
 import static java.lang.Integer.parseInt;
@@ -62,10 +63,10 @@ public class Task {
         task.name = split[2];
         task.status = Status.valueOf(split[3]);
         task.description = split[4];
-        if(!Objects.equals(split[5], "null")) {
+        if (!Objects.equals(split[5], "null")) {
             task.duration = (parseInt(split[5]));
         }
-        if(!Objects.equals(split[6], "null")) {
+        if (!Objects.equals(split[6], "null")) {
             task.startTime = LocalDateTime.parse(split[6]);
         }
         return task;
