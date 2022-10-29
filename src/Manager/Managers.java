@@ -1,6 +1,7 @@
 package Manager;
 
 import HttpServer.LocalDateTimeAdapter;
+import KVServer.KVServer;
 import Task.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -25,6 +26,10 @@ public class Managers {
 
     public static FileBackedTasksManager createFileBackedTasksManager(File file) {
         return new FileBackedTasksManager(file);
+    }
+
+    public static KVServer createDefaultKVServer() throws IOException {
+        return new KVServer();
     }
 
     public static String historyToString(HistoryManager manager) {

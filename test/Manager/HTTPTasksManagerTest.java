@@ -1,18 +1,23 @@
 package Manager;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class HTTPTasksManagerTest extends TaskManagerTest<InMemoryTaskManager> {
-    HTTPTaskManager taskManager;
+import java.io.IOException;
 
+public class HTTPTasksManagerTest extends TaskManagerTest<InMemoryTaskManager> {
+    private HTTPTaskManager taskManager;
+
+    @BeforeAll
+    static void beforeAll(){
+    }
 
     @BeforeEach
-    void beforeEach() {
+    void beforeEach() throws IOException {
         taskManager = Managers.getDefault();
         super.taskManager = taskManager;
     }
-
 
     @Test
     void test1_shouldReturnEqualTasksWhenContainsInManager() {

@@ -9,16 +9,18 @@ import static HttpServer.TaskHandler.PATH;
 
 public class HttpTaskServer {
     private static final int PORT = 8080;
-    HttpServer httpServer;
 
-    private TaskHandler taskHandler = new TaskHandler();
+    private final String HTTP_SERVER_START_MSG = "HTTP-сервер запущен на " + PORT + " порту!";
+    private final HttpServer httpServer;
+
+    private final TaskHandler taskHandler = new TaskHandler();
 
     public HttpTaskServer() throws IOException {
         httpServer = HttpServer.create();
         httpServer.bind(new InetSocketAddress(PORT), 0);
         httpServer.createContext(PATH, taskHandler);
         httpServer.start();
-        System.out.println("HTTP-сервер запущен на " + PORT + " порту!");
+        System.out.println(HTTP_SERVER_START_MSG);
     }
 
     public void stop() {

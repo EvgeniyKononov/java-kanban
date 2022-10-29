@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.*;
 
 class HTTPServersTest {
-    static KVServer kvServer;
+    private static KVServer kvServer;
     private static Gson gson = Managers.getGson();
     HttpTaskServer httpTaskServer;
 
@@ -293,7 +293,7 @@ class HTTPServersTest {
     }
 
     @Test
-    void test8_DeleteTestsTaskSubtaskEpicAndPrioritizedTask() {
+    void test8_DeleteTestsTaskSubtaskEpic() {
         try {
             Task task1 = new Task("Task 1",
                     "Description 1",
@@ -382,5 +382,4 @@ class HTTPServersTest {
             System.out.println("Во время выполнения запроса возникла ошибка. Проверьте, пожалуйста, URL-адрес и повторите попытку.");
         }
     }
-
 }
