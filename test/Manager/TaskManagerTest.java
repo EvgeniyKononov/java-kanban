@@ -1,6 +1,9 @@
 package Manager;
 
-import Task.*;
+import Task.Epic;
+import Task.Status;
+import Task.Subtask;
+import Task.Task;
 import com.google.gson.Gson;
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +12,7 @@ import java.util.HashSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import static Task.Status.*;
+import static Task.Status.NEW;
 import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class TaskManagerTest<T extends TaskManager> {
